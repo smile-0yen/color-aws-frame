@@ -1,69 +1,25 @@
-// chame by @uiureo
-// https://github.com/uiureo/chame
+// default color is #444444
+function changeBgByAccount(key){
+    chrome.storage.sync.get(key, function(items){
+        var background = "#444444";
+        var values = Object.values(items);
+        var background = values[0];
 
-// ASCII文字列をRGB色に変換する
+        console.log("account/background: " + key + "/" + values);
 
-String.prototype.toRGBCode = (function () {
-  // ASCII文字コードをRGB値に変換
-  var charToRGB = function (c) {
-    var h = 22.5 * (c % 16), s = 0.1*(c/16) + 0.3, v = 1.0;
-    var h_i = Math.floor(h/60.0);
-    var f = (h/60.0) - h_i;
-    var p = v*(1-s), q = v*(1-f*s),  t = v*(1-(1-f)*s);
-    var rgb = [[v,t,p],[q,v,p],[p,v,t],[p,q,v],[t,q,v],[v,p,q]];
-    var r = ~~(255*(rgb[h_i][0])), g = ~~(255*(rgb[h_i][1])), b = ~~(255*(rgb[h_i][2]));
+        var selectors = ["#nav-menubar", "#nav-menu-right", "#console-nav-footer"];
+        selectors.forEach(function(s) {
+          document.querySelector(s).style.background = background;
+        })
 
-    return [r,g,b];
-  };
+        var selectors = document.querySelectorAll(".nav-menu");
+        for (var i = 0; i < selectors.length; i++) {
+          selectors[i].style.background = background;
+        }
+    });
+}
 
-  // ASCII文字列をRGB値に変換
-  var strToRGB = function (str) {
-    var i,c,a;
-    var r = 0, g = 0, b = 0;
-    for (i = 0; i < str.length; i++) {
-      c = str.charCodeAt(i);
-      a = charToRGB(c);
-      r += a[0]; g += a[1]; b += a[2];
-    }
-
-    r = ~~(r / str.length);
-    g = ~~(g / str.length);
-    b = ~~(b / str.length);
-
-    return [r,g,b];
-  };
-
-  var rgbToRGBCode = function (rgb) {
-    return '#' + rgb.map(intToHex).join('');
-  };
-
-  var intToHex = function (i) {
-    var str = i.toString(16);
-    return i < 16 ? "0" + str : str
-  };
-
-  var strToRGBCode = function () {
-    return rgbToRGBCode(strToRGB(this));
-  };
-
-  return strToRGBCode;
-}());
-// /chame
-
-// header, footerの色を変える
 (function() {
-  'use strict';
-
-  var account = document.querySelector("#nav-usernameMenu .nav-elt-label").textContent;
-  var background = account.toRGBCode();
-
-  var selectors = ["#nav-menubar", "#nav-menu-right", "#console-nav-footer"];
-  selectors.forEach(function(s) {
-    document.querySelector(s).style.background = background;
-  })
-
-  var selectors = document.querySelectorAll(".nav-menu");
-  for (var i = 0; i < selectors.length; i++) {
-    selectors[i].style.background = background;
-  }
+    var account = document.querySelector("#nav-usernameMenu .nav-elt-label").textContent;
+    changeBgByAccount(account);
 })();
